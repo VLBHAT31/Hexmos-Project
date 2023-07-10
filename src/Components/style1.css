@@ -1,0 +1,16 @@
+h3{
+    width:300px;
+}
+input[type=text]{
+    width:600px;
+    margin-top:20px;
+    height:30px;
+}
+button{
+    margin-top:20px;
+}
+#d1{
+    background-color: lightgrey;
+    padding: 20px;
+    width:45%;
+}

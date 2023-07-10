@@ -1,0 +1,23 @@
+table{
+    margin:30px 20px 20px 20px;
+}
+
+td{
+    height:50px;
+    width:150px;
+    padding:15pt;
+
+}
+th{
+    background-color: lightgrey;
+    padding:10px;
+}
+table, th,td {
+     
+    border:1px solid black;
+    border-collapse:collapse;
+   
+}
+#b1{
+    background-color:skyblue;
+}

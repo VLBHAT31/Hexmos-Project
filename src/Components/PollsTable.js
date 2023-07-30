@@ -1,35 +1,55 @@
-import React, { useContext } from 'react';
-import { PollsContext } from './PollsContext';
+import React, { useEffect } from 'react';
+import { usePollsContext } from './PollsContext';
 import { Link } from 'react-router-dom';
-import './style.css';
+import MyTable from './MyTable';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMessage, setSortBy, setSortOrder } from './actions';
 
-function PollsTable() {
-  const { selectedTags, filteredPolls } = useContext(PollsContext);
+function PollsTable({ pageName }) {
+  const { pollsData, fetchDataByTags } = usePollsContext();
+  const dispatch = useDispatch();
+  const message = useSelector((state) => state.message);
+  const sortColumn = useSelector((state) => state.sortBy[pageName]);
+  const sortOrder = useSelector((state) => state.sortOrder[pageName]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    fetchDataByTags([]); 
+  };
+
+  const columns = [
+    { field: 'number', label: 'Number', sortable: true },
+    { field: 'question', label: 'Poll Question', sortable: true },
+    { field: 'votes', label: 'Total Votes', sortable: true },
+    { field: 'tags', label: 'Tags', sortable: true },
+  ];
+
+  const data = pollsData.map((poll, index) => ({
+    number: index + 1,
+    question: <Link to={`/polldetail/${index + 38}`}>{poll.Question}</Link>,
+    votes: Object.values(poll.OptionVote).reduce((a, b) => a + b, 0),
+    tags: poll.Tags.join(', '),
+  }));
+
+  const handleSort = (field) => {
+    dispatch(setSortBy(pageName, field));
+    dispatch(setSortOrder(pageName, sortOrder === 'asc' ? 'desc' : 'asc'));
+  };
 
   return (
     <div>
-      <table style={{float:'right',position:'absolute',right:'30%',top:'16%',width:'50%'}}>
-        <thead>
-          <tr>
-            <th>Number</th>
-            <th>Poll Question</th>
-            <th>Total Votes</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredPolls.map((poll, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>
-                <Link to={`/polldetail/${poll.id+37}`}>{poll.Question}</Link>
-              </td>
-              <td>{Object.values(poll.OptionVote).reduce((a, b) => a + b, 0)}</td>
-              <td>{poll.Tags.join(', ')}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <MyTable
+        columns={columns}
+        data={data}
+        style={{ float: 'right', position: 'absolute', right: '30%', top: '16%', width: '50%' }}
+        sortColumn={sortColumn}
+        sortOrder={sortOrder}
+        onSort={handleSort}
+        pageName={pageName}
+      />
     </div>
   );
 }

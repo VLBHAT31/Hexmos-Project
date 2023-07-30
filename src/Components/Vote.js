@@ -13,10 +13,6 @@ export default function Vote() {
       <VoteComp id={id}/>
       
       </>
-     
-     
-     
-    
   );
 }
 

@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { PollsContext } from './PollsContext';
+import React from 'react';
+import { usePollsContext } from './PollsContext';
+import { SecondaryButton } from './MyButton';
+import './MyButton.css';
 
 function Filter() {
-  const { selectedTags, handleTagSelection, filterByTags, resetFilter } = useContext(PollsContext);
-  const [tags, setTags] = useState([]);
+  const { fetchDataByTags } = usePollsContext();
+  const [tags, setTags] = React.useState([]);
+  const [selectedTags, setSelectedTags] = React.useState([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetch('http://127.0.0.1:8000/polls/get_all_tags/')
       .then(response => response.json())
       .then(data => {
@@ -17,16 +20,15 @@ function Filter() {
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
     if (checked) {
-      handleTagSelection([...selectedTags, value]);
+      setSelectedTags([...selectedTags, value]);
     } else {
-      handleTagSelection(selectedTags.filter(tag => tag !== value));
+      setSelectedTags(selectedTags.filter(tag => tag !== value));
     }
   };
 
   const handleFilterByTags = () => {
-    filterByTags();
+    fetchDataByTags(selectedTags);
   };
-
   
   let checkStyle = {
     border: "1px solid black",
@@ -60,10 +62,7 @@ function Filter() {
         </React.Fragment>
       ))}
 
-      <button id="b1" style={optionStyle} onClick={handleFilterByTags}>
-        Filter by Tags
-      </button>
-      
+      <SecondaryButton name="Filter By Tags" size="small" onClick={handleFilterByTags} style={optionStyle}/>      
     </div>
   );
 }

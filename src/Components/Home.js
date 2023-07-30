@@ -1,14 +1,15 @@
-import React from 'react'
-import Heading from "./Heading";
-import SideBar from "./SideBar";
-import MainContent from "./MainContent";
+import React from 'react';
+import Heading from './Heading';
+import SideBar from './SideBar';
+import MainContent from './MainContent';
+import { PollsProvider } from './PollsContext';
 
 export default function Home() {
   return (
-    <>
-    <Heading/>
-    <SideBar/>
-    <MainContent/>
-    </>
+    <PollsProvider>
+      <Heading />
+      <SideBar />
+      <MainContent />
+    </PollsProvider>
   );
 }

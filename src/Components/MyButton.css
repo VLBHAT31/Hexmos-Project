@@ -1,0 +1,10 @@
+.create-poll{
+    height: 50px;
+    width: 210px;
+    margin: 10px;
+    padding-left: 40px;
+}
+.filter-by-tags{
+    margin-top:30px;
+    width:20px;
+}

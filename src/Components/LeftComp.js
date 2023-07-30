@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './style.css';
+import { PrimaryButton, SecondaryButton } from "./MyButton";
+import "./MyButton.css";
+import MyTable from './MyTable';
+import { useSelector,useDispatch } from 'react-redux';
+import { setSortBy, setSortOrder } from './actions'; 
 
-function LeftComp() {
+function LeftComp({ pageName }) {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const [question, setQuestion] = useState(null);
   const [isVoteClicked, setIsVoteClicked] = useState(false); // Track if the "Vote" button is clicked
   const initialId = 37; // Set the initialId to 0
+  const message = useSelector((state) => state.message);
+  const sortColumn = useSelector((state) => state.sortBy[pageName]); // Use a specific pageName to access sorting settings
+  const sortOrder = useSelector((state) => state.sortOrder[pageName]);
 
   useEffect(() => {
     fetchData();
@@ -51,39 +60,45 @@ function LeftComp() {
 
   const { Question, OptionVote, Tags } = question;
 
+  const handleSort = (field) => {
+    dispatch(setSortBy(pageName, field)); // Pass the pageName to setSortBy action
+    dispatch(setSortOrder(pageName, sortOrder === 'asc' ? 'desc' : 'asc')); // Pass the pageName to setSortOrder action
+  };
+
   return (
-    <div style={{ padding: '25px', width: '1000px', height: '90px' }}>
+    <div style={{ padding: '25px', width: '1000px', height: '60px' }}>
       <div style={{ paddingLeft: '20px' }}>
-      <h1>{Question}</h1>
-      {!isVoteClicked && ( // Render the link to VoteComp only when isVoteClicked is false
-        <Link to={`/vote/${id}`} style={{ textDecoration: 'none' }}>
-          <button style={{ height: '50px',backgroundColor:'skyblue',border:'whitesmoke' }} id="but" onClick={handleVoteClick}>
-            Vote on this Poll
-          </button>
-        </Link>
-      )}
+        <h1>{Question}</h1>
+        {!isVoteClicked && ( // Render the link to VoteComp only when isVoteClicked is false
+          <Link to={`/vote/${id}`} style={{ textDecoration: 'none' }}>
+            {/* <button style={{ height: '50px',backgroundColor:'skyblue',border:'whitesmoke' }} id="but" onClick={handleVoteClick}>
+              Vote on this Poll
+            </button> */}
+            <PrimaryButton name="Vote on this Poll" size="large" className="vote-on-this-poll"/>
+          </Link>
+        )}
       </div>
       <div >
-        <table>
-          <thead>
-            <tr>
-              <th>Number</th>
-              <th>Option</th>
-              <th>Votes</th>
-            </tr>
-          </thead>
-          <tbody style={{width: '100px', padding: '5px', fontSize: '17px'}} >
-            {Object.entries(OptionVote).map(([option, votes], index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{option}</td>
-                <td>{votes}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MyTable
+          style={{width: '50%', padding: '5px', fontSize: '17px'}}
+          columns={[
+            { field: 'number', label: 'Number' },
+            { field: 'option', label: 'Option' },
+            { field: 'votes', label: 'Votes' },
+          ]}
+          data={Object.entries(OptionVote).map(([option, votes], index) => ({
+            number: index + 1,
+            option: option,
+            votes: votes,
+          }))}
+          sortColumn={sortColumn} // Pass sortColumn as a prop to MyTable
+          sortOrder={sortOrder} // Pass sortOrder as a prop to MyTable
+          onSort={handleSort}
+          pageName={pageName} // Pass a unique pageName prop to identify this table
+        />
       </div>
-      <p style={{ paddingLeft: '17px' }}>Tags: {Tags.join(', ')}</p>
+      <p style={{ paddingLeft: '17px'}}>Tags: {Tags.join(', ')}</p>
+      <p>{message}</p>
     </div>
   );
 }

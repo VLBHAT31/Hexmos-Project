@@ -6,11 +6,11 @@ import RightComp from './RightComp';
 
 function PollDetail() {
   const { id } = useParams();
-
+  
   return (
     <>
       <Heading />
-      <LeftComp id={id} />
+      <LeftComp id={id} pageName="leftComp"/>
       <RightComp id={id} />
     </>
   );

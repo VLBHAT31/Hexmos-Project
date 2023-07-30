@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './MyButton.css';
+import { PrimaryButton, SecondaryButton } from "./MyButton";
+import { Alert } from '@mui/material';
 
 function VoteComp({ id }) {
   const radioStyle = {
@@ -16,6 +19,8 @@ function VoteComp({ id }) {
   const navigate = useNavigate();
   const [question, setQuestion] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -34,23 +39,31 @@ function VoteComp({ id }) {
   const handleVoteClick = async () => {
     if (!selectedOption) {
       // Check if an option is selected
+      setErrorMessage('Please select an option.'); // Set the error message
       return;
     }
 
-    // Perform the necessary logic for voting
-    // ...
-    await fetch(`http://127.0.0.1:8000/polls/update_poll/${id}/`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        incrementOption: selectedOption.option, // Pass the selected option value
-      }),
-    });
+    try {
+      await fetch(`http://127.0.0.1:8000/polls/update_poll/${id}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          incrementOption: selectedOption.option, // Pass the selected option value
+        }),
+      });
 
-    // Navigate to the PollsDetail page with the question ID
-    navigate(`/polldetail/${id}`); // Replace ":id" with the actual ID of the poll
+      setShowSuccessMessage(true);
+      // Navigate to the PollsDetail page with the question ID
+      setTimeout(() => {
+        navigate(`/polldetail/${id}`); 
+        setShowSuccessMessage(false); 
+      }, 1000); 
+    } catch (error) {
+      console.error(error);
+      setErrorMessage('An error occurred.'); 
+    }
   };
 
   const handleOptionChange = (event) => {
@@ -81,9 +94,10 @@ function VoteComp({ id }) {
           </label>
         ))}
         <br />
-        <button style={{width: '50px',marginTop: '10px',backgroundColor:'skyblue',border:'whitesmoke'}} id="vote" onClick={handleVoteClick} disabled={!selectedOption}>
-          Vote
-        </button>
+        {errorMessage && <Alert severity="error" style={{ width: '300px' }}>{errorMessage}</Alert>} {/* Display the error message */}
+        {showSuccessMessage && <Alert severity="success" style={{ width: '300px' }}>Voted successfully!</Alert>}
+        <br />
+        <SecondaryButton name="Vote" size="small" className="vote" onClick={handleVoteClick} />
       </div>
     </div>
   );

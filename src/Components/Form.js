@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style1.css';
+import {PrimaryButton,SecondaryButton} from "./MyButton";
+
 
 function Form() {
   const navigate = useNavigate();
@@ -126,7 +128,8 @@ function Form() {
             </div>
           </div>
         ))}
-        <button onClick={handleAddOption}>Add Option</button>
+        {/* <button onClick={handleAddOption}>Add Option</button> */}
+        <SecondaryButton name="Add Option" size="small" className="add-option" onClick={handleAddOption} style={{marginTop:'20px' }}/>
         <h3>Comma Separated Tags</h3>
         <input
           type="text"
@@ -137,7 +140,8 @@ function Form() {
         />
         <br /><br/>
       </div>
-      <button style={{ height: "40px", width: "200px" }} onClick={handleCreatePoll}>Create Poll</button>
+      {/* <button style={{ height: "40px", width: "200px" }} onClick={handleCreatePoll}>Create Poll</button> */}
+      <PrimaryButton name="Create Poll" size="large" className="create-poll" onClick={handleCreatePoll} style={{marginTop:'20px' }}/>
     </div>
   );
 }

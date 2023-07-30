@@ -4,7 +4,7 @@ import PollsTable from "./PollsTable";
 function MainContent() {
   return (
     <>
-    <PollsTable/>
+    <PollsTable pageName="PollsTable"/>
     </>
   )
 }
